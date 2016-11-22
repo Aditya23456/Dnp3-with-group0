@@ -30,6 +30,8 @@ namespace opendnp3 {
 */
 enum class GroupVariation : uint16_t
 {
+  Group0Var250=0x0FA,
+  Group0Var252=0x0FC,
   Group1Var0 = 0x100,
   Group1Var1 = 0x101,
   Group1Var2 = 0x102,

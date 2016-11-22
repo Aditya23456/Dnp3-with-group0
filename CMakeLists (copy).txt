@@ -76,7 +76,7 @@ set_target_properties(openpal PROPERTIES FOLDER libs)
 
 # ---- opendnp3 library ----
 file(GLOB_RECURSE opendnp3_SRC ./cpp/libs/src/opendnp3/*.cpp ./cpp/libs/src/opendnp3/*.h ./cpp/libs/include/opendnp3/*.h)
-add_library(opendnp3 ${LIB_TYPE} ${opendnp3_SRC} cpp/libs/src/opendnp3/objects/Group0.cpp cpp/libs/src/opendnp3/objects/Group0.h)
+add_library(opendnp3 ${LIB_TYPE} ${opendnp3_SRC})
 target_link_libraries(opendnp3 openpal)
 install(TARGETS opendnp3 DESTINATION lib)
 set_target_properties(opendnp3 PROPERTIES FOLDER libs)
@@ -109,7 +109,7 @@ if(DNP3_TLS)
 else()
   file(GLOB asiodnp3_SRC ./cpp/libs/src/asiodnp3/*.cpp ./cpp/libs/src/asiodnp3/*.h ./cpp/libs/include/asiodnp3/*.h)
 endif()
-add_library(asiodnp3 ${LIB_TYPE} ${asiodnp3_SRC} cpp/libs/include/opendnp3/app/device.h)
+add_library(asiodnp3 ${LIB_TYPE} ${asiodnp3_SRC})
 target_link_libraries(asiodnp3 asiopal opendnp3)
 install(TARGETS asiodnp3 DESTINATION lib)
 set_target_properties(asiodnp3 PROPERTIES FOLDER libs)
@@ -170,7 +170,7 @@ if(DEMO)
 
 endif()
 
-
+if(TEST)
 
   enable_testing()
 
@@ -207,7 +207,7 @@ endif()
   set_target_properties(testasiodnp3 PROPERTIES FOLDER tests)
   add_test(testasiodnp3 testasiodnp3)
 
-
+endif()
 
 add_custom_target(
 	format

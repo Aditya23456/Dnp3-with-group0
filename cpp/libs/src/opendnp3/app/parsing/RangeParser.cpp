@@ -25,8 +25,8 @@
 #include "opendnp3/objects/Group1.h"
 
 #include "opendnp3/objects/Group3.h"
-
-
+//#include "opendnp3/objects/Group0.h"
+#include <openpal/serialization/Serialization.h>
 #include "opendnp3/objects/Group10.h"
 #include "opendnp3/objects/Group20.h"
 #include "opendnp3/objects/Group21.h"
@@ -38,7 +38,7 @@
 
 
 #include <openpal/logging/LogMacros.h>
-
+#include <opendnp3/app/device.h>
 
 
 namespace opendnp3
@@ -110,7 +110,12 @@ ParseResult RangeParser::ParseRangeOfObjects(openpal::RSlice& buffer, const Head
 {
 	switch (record.enumeration)
 	{
-	case(GroupVariation::Group1Var1) :
+
+		case(GroupVariation::Group0Var250) :
+			return RangeParser::FromVaryingSize<Group0Var250>(range, buffer).Process(record, buffer, pHandler, pLogger);
+			//return ParseRangeOfDevicedata(buffer, record, range, pLogger, pHandler);
+
+		case(GroupVariation::Group1Var1) :
 		return RangeParser::FromBitfieldType<Binary>(range).Process(record, buffer, pHandler, pLogger);
 
 		MACRO_PARSE_OBJECTS_WITH_RANGE(Group1Var2);
@@ -206,6 +211,64 @@ ParseResult RangeParser::ParseRangeOfOctetData(openpal::RSlice& buffer, const He
 	}
 }
 
+ParseResult RangeParser::ParseRangeOfDevicedata(openpal::RSlice& buffer, const HeaderRecord& record, const Range& range, openpal::Logger* pLogger, IAPDUHandler* pHandler)
+	{
+		using namespace openpal;
+		if (record.variation > 0)
+		{
+			const auto COUNT = range.Count();
+			uint8_t typecode = UInt8::ReadBuffer(buffer);
+			uint8_t size =   UInt8::ReadBuffer(buffer);
+			uint32_t total_size = size * COUNT;
+			if (buffer.Size() < total_size)
+			{
+				SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, "Not enough data for specified octet objects");
+				return ParseResult::NOT_ENOUGH_DATA_FOR_OBJECTS;
+			}
+			else
+			{
+				//Range range;
+				if (pHandler)
+				{
+					HandleFun handler;
+
+					/*
+					auto read = [range, record](openpal::RSlice & buffer, uint32_t pos) -> Indexed<Devicedata>
+					{
+						Devicedata octets(buffer.Take(record.variation));
+						buffer.Advance(record.variation);
+						return WithIndex(octets, range.start + pos);
+					};
+
+					auto collection = CreateBufferedCollection<Indexed<Devicedata>>(buffer, COUNT, read);
+
+					pHandler->OnHeader(RangeHeader(record, range), collection);
+					*/
+					const auto COUNT = range.Count();
+
+					auto read = [range](openpal::RSlice & buffer, uint32_t pos)
+					{
+						typename Group0Var250::Target target;
+						Group0Var250::ReadTarget(buffer, target);
+						return WithIndex(target, range.start + pos);
+					};
+
+					auto collection = CreateBufferedCollection<Indexed<typename Group0Var250::Target>>(buffer, COUNT, read);
+
+					//handler.OnHeader(RangeHeader(record, range), collection);
+
+				}
+
+				buffer.Advance(size);
+				return ParseResult::OK;
+			}
+		}
+		else
+		{
+			SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, " Variation 0 may only be used in requests");
+			return ParseResult::INVALID_OBJECT;
+		}
+	}
 
 }
 

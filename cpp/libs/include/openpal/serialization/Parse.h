@@ -43,7 +43,7 @@ public:
 
 	static bool Read(RSlice& input, double& output);
 	static bool Read(RSlice& input, float& output);
-
+	static bool Read(RSlice& input,  char& output);
 	template <typename T, typename... Args>
 	static bool Many(RSlice& input, T& output, Args& ... args)
 	{

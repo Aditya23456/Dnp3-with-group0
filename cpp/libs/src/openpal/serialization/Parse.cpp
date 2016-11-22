@@ -37,7 +37,24 @@ bool ParseType(RSlice& input, typename Serializer::Type& output)
 		return true;
 	}
 }
-
+	template <class func1>
+	bool ParseType2(RSlice& input, char *output)
+	{
+		if (input.Size() < func1::SIZE)
+		{
+			return false;
+		}
+		else
+{		char namep[input.Size()];
+			func1::ReadBuffer(namep,input);
+			for(int i=0; i<input.Size(); i++)
+			{
+				output[i]=namep[i];
+				//namep++;
+			}
+			return true;
+		}
+	}
 bool Parse::Read(RSlice& input, uint8_t& output)
 {
 	return ParseType<UInt8>(input, output);
@@ -73,10 +90,16 @@ bool Parse::Read(RSlice& input, double& output)
 	return ParseType<DoubleFloat>(input, output);
 }
 
+bool Parse::Read(RSlice& input, char& output)
+{
+	return ParseType<CH>(input,output);
+}
+
 bool Parse::Read(RSlice& input, float& output)
 {
 	return ParseType<SingleFloat>(input, output);
 }
+
 }
 
 

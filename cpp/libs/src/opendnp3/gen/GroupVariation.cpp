@@ -30,6 +30,10 @@ GroupVariation GroupVariationFromType(uint16_t arg)
 {
   switch(arg)
   {
+    case(0x0FA):
+      return GroupVariation::Group0Var250;
+    case(0x0FC):
+      return GroupVariation::Group0Var252;
     case(0x100):
       return GroupVariation::Group1Var0;
     case(0x101):

@@ -83,7 +83,7 @@ private:
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<OctetString>>& values) override final;
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<TimeAndInterval>>& values) override final;
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values) override final;
-
+	//IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group0Var250>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Binary>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<DoubleBitBinary>>& values) override final;

@@ -35,9 +35,9 @@
 #include "opendnp3/app/Indexed.h"
 #include "opendnp3/app/OctetString.h"
 #include "opendnp3/app/Range.h"
-
+#include "opendnp3/app/device.h"
 #include "opendnp3/gen/QualifierCode.h"
-
+#include "opendnp3/objects/Group0.h"
 #include "opendnp3/objects/Group50.h"
 #include "opendnp3/objects/Group51.h"
 #include "opendnp3/objects/Group52.h"
@@ -99,6 +99,7 @@ public:
 	void OnHeader(const RangeHeader& header, const ICollection<Indexed<OctetString>>& values);
 	void OnHeader(const RangeHeader& header, const ICollection<Indexed<TimeAndInterval>>& values);
 	void OnHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values);
+	void OnHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values);
 
 	// events
 
@@ -182,7 +183,7 @@ protected:
 	virtual IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<OctetString>>& values);
 	virtual IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<TimeAndInterval>>& values);
 	virtual IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values);
-
+	virtual IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values);
 	virtual IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Binary>>& values);
 	virtual IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values);
 	virtual IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<DoubleBitBinary>>& values);

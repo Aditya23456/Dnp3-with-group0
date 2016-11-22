@@ -23,7 +23,8 @@
 
 #include <openpal/container/RSlice.h>
 #include <openpal/logging/Logger.h>
-
+#include <openpal/serialization/ByteSerialization.h>
+#include <openpal/serialization/Serialization.h>
 #include "opendnp3/app/parsing/ParseResult.h"
 #include "opendnp3/app/parsing/IAPDUHandler.h"
 #include "opendnp3/app/parsing/ParseResult.h"
@@ -66,7 +67,8 @@ private:
 
 	template <class Type>
 	static RangeParser FromFixedSizeType(const Range& range);
-
+	template <class Varying>
+	static RangeParser FromVaryingSize(const Range& range, openpal::RSlice& buffer);
 	// Create a range parser from a bitfield and a function to map the bitfield to values
 	template <class Type>
 	static RangeParser FromBitfieldType(const Range& range);
@@ -78,11 +80,17 @@ private:
 
 	static ParseResult ParseRangeOfOctetData(openpal::RSlice& buffer, const HeaderRecord& record, const Range& range, openpal::Logger* pLogger, IAPDUHandler* pHandler);
 
+	static ParseResult ParseRangeOfDevicedata(openpal::RSlice& buffer, const HeaderRecord& record, const Range& range, openpal::Logger* pLogger, IAPDUHandler* pHandler);
+
 	template <class Descriptor>
 	static void InvokeRangeOf(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler);
 
 	template <class Type>
 	static void InvokeRangeOfType(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler);
+
+	template <class Varying>
+	static void InvokeRangeOfVary(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler);
+
 
 	template <class Type>
 	static void InvokeRangeBitfieldType(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler);
@@ -111,6 +119,18 @@ RangeParser RangeParser::FromFixedSizeType(const Range& range)
 {
 	uint32_t size = range.Count() * Type::Size();
 	return RangeParser(range, size, &InvokeRangeOfType<Type>);
+}
+
+template <class Varying>
+RangeParser RangeParser::FromVaryingSize(const Range& range, openpal::RSlice& buffer)
+{
+	using namespace openpal;
+	const auto COUNT = range.Count();
+	uint8_t typecode = UInt8::ReadBuffer(buffer);
+	uint8_t size =   UInt8::ReadBuffer(buffer);
+	uint32_t total_size = size * COUNT;
+	//record.type_code = typecode;
+	return RangeParser(range, total_size, &InvokeRangeOfVary<Varying>);
 }
 
 template <class Descriptor>
@@ -177,8 +197,7 @@ RangeParser RangeParser::FromDoubleBitfieldType(const Range& range)
 	uint32_t size = NumBytesInDoubleBits(range.Count());
 	return RangeParser(range, size, &InvokeRangeDoubleBitfieldType<Type>);
 }
-
-template <class Type>
+	template <class Type>
 void RangeParser::InvokeRangeDoubleBitfieldType(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler)
 {
 	const uint32_t COUNT = range.Count();
@@ -193,6 +212,30 @@ void RangeParser::InvokeRangeDoubleBitfieldType(const HeaderRecord& record, cons
 
 	handler.OnHeader(RangeHeader(record, range), collection);
 }
+template <class Varying>
+
+void RangeParser::InvokeRangeOfVary(const HeaderRecord& record, const Range& range, const openpal::RSlice& buffer, IAPDUHandler& handler)
+{
+	const auto COUNT = range.Count();
+//int8_t type_code=record.type_code;
+	auto read = [range](openpal::RSlice & buffer, uint32_t pos)
+	//auto read = [range](openpal::RSlice & buffer, uint32_t pos) -> Indexed<Varying>
+	{
+		typename Varying::Target target;
+		//Varying target;
+		Varying::ReadTarget(buffer, target );
+		return WithIndex(target, range.start + pos);
+	};
+
+
+
+	auto collection = CreateBufferedCollection<Indexed<typename Varying::Target>>(buffer, COUNT, read);
+
+//auto collection = CreateBufferedCollection<Indexed<Varying>>(buffer, COUNT, read);
+	//handler.OnHeader(RangeHeader(record, range), collection);
+
+	handler.OnHeader(RangeHeader(record, range), collection);
+	}
 
 }
 

@@ -86,7 +86,6 @@ public:
 	HeaderRecord(const GroupVariationRecord& gv, uint8_t qualifier, uint32_t headerIndex);
 
 	QualifierCode GetQualifierCode() const;
-
 	uint8_t qualifier;
 	uint32_t headerIndex;
 };

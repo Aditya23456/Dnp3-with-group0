@@ -462,6 +462,11 @@ IINField LoggingHandler::ProcessHeader(const RangeHeader& header, const ICollect
 	return this->PrintSecStat(values);
 }
 
+IINField LoggingHandler::ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group0Var250>>& values)
+{
+	return this->PrintSecStat(values);
+}
+
 IINField LoggingHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Binary>>& values)
 {
 	return this->PrintVQT(header.enumeration, values);

@@ -113,7 +113,6 @@ void IAPDUHandler::OnHeader(const FreeFormatHeader& header, const Group120Var13&
 {
 	Record(header, this->ProcessHeader(header, value, object));
 }
-
 void IAPDUHandler::OnHeader(const FreeFormatHeader& header, const Group120Var14& value, const openpal::RSlice& object)
 {
 	Record(header, this->ProcessHeader(header, value, object));
@@ -212,6 +211,11 @@ void IAPDUHandler::OnHeader(const RangeHeader& header, const ICollection<Indexed
 void IAPDUHandler::OnHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values)
 {
 	Record(header, this->ProcessHeader(header, values));
+}
+
+void IAPDUHandler::OnHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values)
+{
+	Record(header, this->ProcessHeader( header, values));
 }
 
 // --- index prefixes ----
@@ -478,6 +482,10 @@ IINField IAPDUHandler::ProcessHeader(const RangeHeader& header, const ICollectio
 }
 
 IINField IAPDUHandler::ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values)
+{
+	return ProcessUnsupportedHeader();
+}
+IINField IAPDUHandler::ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values)
 {
 	return ProcessUnsupportedHeader();
 }
