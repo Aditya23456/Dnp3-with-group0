@@ -37,6 +37,30 @@ using namespace testlib;
 
 #define SUITE(name) "MasterTestSuite - " name
 
+TEST_CASE(SUITE("ParsesGroup0Var150Correctly"))
+{
+	auto config = NoStartupTasks();
+	config.startupIntegrityClassMask = ClassField(~0);
+	MasterTestObject t(config);
+	t.context.OnLowerLayerUp();
+
+	REQUIRE(t.exe.RunMany() > 0);
+
+	REQUIRE(t.lower.PopWriteAsHex() == hex::IntegrityPoll(0));
+	t.context.OnSendResult(true);
+
+	t.SendToMaster("C3 81 00 00 00 FA 00 00 00 01 08 41 42 43 20 43 6F 72 70");
+
+	REQUIRE(5==5);
+	{
+		auto record = t.meas.DeviceInfoSOE[1];
+		//REQUIRE(record.meas.time == 5);
+		//REQUIRE(record.info.gv == GroupVariation::Group0Var250);
+	}
+
+}
+
+
 TEST_CASE(SUITE("InitialState"))
 {
 	MasterParams params;

@@ -68,7 +68,19 @@ std::string BufferToString(const RSlice& buff)
 }
 
 #define SUITE(name) "APDUParsingTestSuite - " name
-/*
+
+TEST_CASE(SUITE("Group0Var250Range"))
+{
+
+    //TestComplex("1E 01 00 03 05 81 01 81 67 45 68 75 68 75 67 66 68 75 68 75", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
+
+    //TestComplex("02 01 17 01 09 81", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
+    TestComplex("00 FA 17 01 00 01 08 41 42 43 20 43 6F 72 70", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
+    //TestComplex("00 FA 00 00 00 01 08 41 42 43 20 43 6F 72 70", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
+    {
+
+    });
+}
 TEST_CASE(SUITE("HeaderParsingEmptySring"))
 {
 	HexSequence buffer("");
@@ -135,28 +147,6 @@ TEST_CASE(SUITE("NotEnoughDataForObjects"))
 {
 	// 1 byte start/stop  1->4, 3 octests data
 	TestSimple("01 02 00 01 04 FF FF FF", ParseResult::NOT_ENOUGH_DATA_FOR_OBJECTS, 0);
-}
-*/
-TEST_CASE(SUITE("Group0Var250Range"))
-{
-	// 1 byte start/stop  3->5, 3 octests data
-	//TestComplex("1E 01 00 03 05 81 01 81 67 45 68 75 68 75 67 66 68 75 68 75", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
-	TestComplex("00 FA 00 00 00 01 08 41 42 43 20 43 6F 72 70", ParseResult::OK, 1, [](MockApduHeaderHandler & mock)
-	{
-		REQUIRE(1 ==  mock.DeviceInfo.size());
-		{
-//			Indexed<Devicedata> value(Devicedata(true), 3);
-			//REQUIRE((value == mock.DeviceInfo[0]));
-		}
-		{
-			Indexed<Binary> value(Binary(false), 4);
-			REQUIRE((value == mock.staticBinaries[1]));
-		}
-		{
-			Indexed<Binary> value(Binary(true), 5);
-			REQUIRE((value == mock.staticBinaries[2]));
-		}
-	});
 }
 
 

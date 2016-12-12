@@ -225,6 +225,11 @@ void IAPDUHandler::OnHeader(const PrefixHeader& header, const ICollection<Indexe
 	Record(header, this->ProcessHeader(header, values));
 }
 
+void IAPDUHandler::OnHeader(const PrefixHeader& header, const ICollection<Indexed<Devicedata>>& values)
+{
+	Record(header, this->ProcessHeader(header, values));
+}
+
 void IAPDUHandler::OnHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values)
 {
 	Record(header, this->ProcessHeader(header, values));
@@ -507,7 +512,12 @@ IINField IAPDUHandler::ProcessHeader(const PrefixHeader& header, const ICollecti
 	return ProcessUnsupportedHeader();
 }
 
-IINField IAPDUHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values)
+IINField IAPDUHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Devicedata>>& values)
+{
+	return ProcessUnsupportedHeader();
+}
+
+	IINField IAPDUHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values)
 {
 	return ProcessUnsupportedHeader();
 }

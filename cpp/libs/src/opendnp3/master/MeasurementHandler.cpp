@@ -96,6 +96,10 @@ IINField MeasurementHandler::ProcessHeader(const RangeHeader& header, const ICol
 	return this->LoadValues(header, ModeFromType(header.enumeration), values);
 }
 
+IINField MeasurementHandler::ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values)
+{
+	return this->LoadValues(header, ModeFromType(header.enumeration), values);
+}
 IINField MeasurementHandler::ProcessHeader(const RangeHeader& header, const ICollection<Indexed<DoubleBitBinary>>& values)
 {
 	return this->LoadValues(header, ModeFromType(header.enumeration), values);
@@ -154,6 +158,11 @@ IINField MeasurementHandler::ProcessHeader(const PrefixHeader& header, const ICo
 }
 
 IINField MeasurementHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values)
+{
+	return this->LoadValues(header, ModeFromType(header.enumeration), values);
+}
+
+IINField MeasurementHandler::ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Devicedata>>& values)
 {
 	return this->LoadValues(header, ModeFromType(header.enumeration), values);
 }

@@ -83,7 +83,7 @@ private:
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<OctetString>>& values) override final;
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<TimeAndInterval>>& values) override final;
 	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group121Var1>>& values) override final;
-	//IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Group0Var250>>& values) override final;
+	IINField ProcessHeader(const RangeHeader& header, const ICollection<Indexed<Devicedata>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Binary>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<BinaryOutputStatus>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<DoubleBitBinary>>& values) override final;
@@ -96,7 +96,7 @@ private:
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<AnalogCommandEvent>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Group122Var1>>& values) override final;
 	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Group122Var2>>& values) override final;
-
+	IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Devicedata>>& values) override final;
 
 	template <class Target, class Source>
 	IINField LoadValuesWithTransformTo(const HeaderRecord& record, const ICollection<Indexed<Source>>& values)

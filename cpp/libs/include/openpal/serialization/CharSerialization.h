@@ -14,28 +14,13 @@ namespace openpal
     {
     public:
 
-        static T Read(const uint8_t* pStart)
+        static int Read(const uint8_t* pStart)
         {
 
-         //char one = static_cast<char>(value);
             return (*pStart);
         }
 
-     /*   static void ReadBuffer( char* name,RSlice& buffer)
-        {
-            int length=buffer.Size();
-          //  char name[length];
-            for (int i=0; i<=length; i++)
-            {
-                int ret = Read(buffer);
-                char value=static_cast<char>(ret);
-                name[i]= value;
-                buffer.Advance(SIZE);
-            }
-            //return name;
-        } */
-
-        static char ReadBuffer(RSlice& buffer)
+        static std::string ReadBuffer(RSlice& buffer)
         {
             int length=buffer.Size();
             char name[length];
@@ -48,7 +33,8 @@ namespace openpal
                 name[i]= value;
                 buffer.Advance(SIZE);
             }
-            return name[0];
+            std::string str=std::string(name);
+            return str;
         }
 
         const static size_t SIZE = 1;

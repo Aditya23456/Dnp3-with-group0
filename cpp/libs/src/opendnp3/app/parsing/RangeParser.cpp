@@ -38,7 +38,7 @@
 
 
 #include <openpal/logging/LogMacros.h>
-#include <opendnp3/app/device.h>
+#include <opendnp3/app/Device.h>
 
 
 namespace opendnp3
@@ -112,8 +112,7 @@ ParseResult RangeParser::ParseRangeOfObjects(openpal::RSlice& buffer, const Head
 	{
 
 		case(GroupVariation::Group0Var250) :
-			return RangeParser::FromVaryingSize<Group0Var250>(range, buffer).Process(record, buffer, pHandler, pLogger);
-			//return ParseRangeOfDevicedata(buffer, record, range, pLogger, pHandler);
+			return ParseRangeOfDevicedata(buffer, record, range, pLogger, pHandler);
 
 		case(GroupVariation::Group1Var1) :
 		return RangeParser::FromBitfieldType<Binary>(range).Process(record, buffer, pHandler, pLogger);
@@ -211,64 +210,45 @@ ParseResult RangeParser::ParseRangeOfOctetData(openpal::RSlice& buffer, const He
 	}
 }
 
-ParseResult RangeParser::ParseRangeOfDevicedata(openpal::RSlice& buffer, const HeaderRecord& record, const Range& range, openpal::Logger* pLogger, IAPDUHandler* pHandler)
-	{
-		using namespace openpal;
-		if (record.variation > 0)
-		{
-			const auto COUNT = range.Count();
-			uint8_t typecode = UInt8::ReadBuffer(buffer);
-			uint8_t size =   UInt8::ReadBuffer(buffer);
-			uint32_t total_size = size * COUNT;
-			if (buffer.Size() < total_size)
-			{
-				SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, "Not enough data for specified octet objects");
-				return ParseResult::NOT_ENOUGH_DATA_FOR_OBJECTS;
-			}
-			else
-			{
-				//Range range;
-				if (pHandler)
-				{
-					HandleFun handler;
+ParseResult RangeParser::ParseRangeOfDevicedata(openpal::RSlice& buffer, const HeaderRecord& record, const Range& range, openpal::Logger* pLogger, IAPDUHandler* pHandler) {
+	using namespace openpal;
 
-					/*
-					auto read = [range, record](openpal::RSlice & buffer, uint32_t pos) -> Indexed<Devicedata>
-					{
-						Devicedata octets(buffer.Take(record.variation));
-						buffer.Advance(record.variation);
-						return WithIndex(octets, range.start + pos);
-					};
+		const auto COUNT = range.Count();
+		uint8_t typecode = UInt8::ReadBuffer(buffer);
+		uint8_t size = UInt8::ReadBuffer(buffer);
+		uint32_t total_size = size * COUNT;
+		if (buffer.Size() < total_size) {
+			SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, "Not enough data for device attributes");
+			return ParseResult::NOT_ENOUGH_DATA_FOR_OBJECTS;
+		} else {
 
-					auto collection = CreateBufferedCollection<Indexed<Devicedata>>(buffer, COUNT, read);
+            if (typecode==1){
+			if (pHandler) {
+				HandleFun handler;
+				auto read = [range](openpal::RSlice &buffer, uint32_t pos) {
+					Devicedata target;
+					Group0Var250::ReadTarget(buffer, target);
+					return WithIndex(target, range.start + pos);
+				};
 
-					pHandler->OnHeader(RangeHeader(record, range), collection);
-					*/
-					const auto COUNT = range.Count();
+				auto collection = CreateBufferedCollection<Indexed<Devicedata>>(buffer, COUNT, read);
 
-					auto read = [range](openpal::RSlice & buffer, uint32_t pos)
-					{
-						typename Group0Var250::Target target;
-						Group0Var250::ReadTarget(buffer, target);
-						return WithIndex(target, range.start + pos);
-					};
+				pHandler->OnHeader(RangeHeader(record, range), collection);
 
-					auto collection = CreateBufferedCollection<Indexed<typename Group0Var250::Target>>(buffer, COUNT, read);
 
-					//handler.OnHeader(RangeHeader(record, range), collection);
+			}}
+            else if (typecode==2)
+            {
 
-				}
+                //TODO parsing of other typecodes
 
-				buffer.Advance(size);
-				return ParseResult::OK;
-			}
+            }
+			buffer.Advance(size);
+			return ParseResult::OK;
 		}
-		else
-		{
-			SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, " Variation 0 may only be used in requests");
-			return ParseResult::INVALID_OBJECT;
-		}
-	}
+
+
+}
 
 }
 

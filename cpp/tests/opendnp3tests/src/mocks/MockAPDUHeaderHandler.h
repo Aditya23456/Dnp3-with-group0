@@ -103,6 +103,11 @@ public:
 		return this->ProcessAny(header, values, eventBinaries);
 	}
 
+	virtual IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<Devicedata>>& values) override final
+	{
+		return this->ProcessAny(header, values, Deviceinfo);
+	}
+
 	virtual IINField ProcessHeader(const PrefixHeader& header, const ICollection<Indexed<DoubleBitBinary>>& values) override final
 	{
 		return this->ProcessAny(header, values, eventDoubleBinaries);
@@ -198,7 +203,7 @@ public:
 	std::vector<Group120Var6> authChanges;
 	std::vector<Indexed<Devicedata>> DeviceInfo;
 	std::vector<Indexed<IINValue>> iinBits;
-
+	std::vector<Indexed<Devicedata>> Deviceinfo;
 	std::vector<Indexed<Binary>> eventBinaries;
 	std::vector<Indexed<Binary>> staticBinaries;
 

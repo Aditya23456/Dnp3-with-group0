@@ -29,7 +29,7 @@
 #include "opendnp3/app/AnalogCommandEvent.h"
 #include "opendnp3/app/OctetString.h"
 #include "opendnp3/app/SecurityStat.h"
-
+#include "opendnp3/app/Device.h"
 #include "opendnp3/app/Indexed.h"
 #include "opendnp3/app/parsing/ICollection.h"
 
@@ -51,6 +51,7 @@ class ISOEHandler : public ITransactable
 public:
 
 	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Binary>>& values) = 0;
+	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Devicedata>>& values) = 0;
 	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<DoubleBitBinary>>& values) = 0;
 	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Analog>>& values) = 0;
 	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Counter>>& values) = 0;

@@ -81,6 +81,9 @@ private:
 	HandleFun handler;
 
 	CountIndexParser() = delete;
+
+	static ParseResult ParseIndexPrefixedDeviceData(openpal::RSlice &buffer, const HeaderRecord &record, const NumParser &numparser,
+                                 uint32_t count, openpal::Logger *pLogger, IAPDUHandler *pHandler);
 };
 
 template <class Descriptor>

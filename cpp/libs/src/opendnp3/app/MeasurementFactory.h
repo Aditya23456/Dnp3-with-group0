@@ -20,8 +20,8 @@
  */
 #ifndef OPENDNP3_MEASUREMENTFACTORY_H
 #define OPENDNP3_MEASUREMENTFACTORY_H
-#include <opendnp3/app/device.h>
 
+#include <opendnp3/app/Device.h>
 #include <openpal/util/Uncopyable.h>
 #include "opendnp3/app/MeasurementTypes.h"
 #include "opendnp3/app/TimeAndInterval.h"
@@ -86,14 +86,14 @@ struct AnalogFactory: private openpal::StaticOnly
 	}
 };
 
-	struct Devicefactory: private openpal::StaticOnly
-	{
+struct Devicefactory: private openpal::StaticOnly
+{
 
-		static Devicedata From( char value[])
-		{
-			return Devicedata (value);
-		}
-		};
+	static Devicedata From( std::string value)
+	{
+	return Devicedata (value);
+	}
+	};
 
 
 struct CounterFactory: private openpal::StaticOnly

@@ -37,7 +37,7 @@ typedef Bit32LE<int32_t>	Int32;
 typedef Bit32LE<uint32_t>	UInt32;
 typedef UInt48LE			UInt48;
 typedef UInt8Simple			UInt8;
-typedef Character<char>     CH;
+typedef Character<std::string>     CH;
 
 }
 

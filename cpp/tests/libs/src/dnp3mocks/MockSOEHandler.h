@@ -67,6 +67,11 @@ public:
 		this->RecordAny(info, values, this->binarySOE);
 	}
 
+	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<Devicedata>>& values) override final
+	{
+		this->RecordAny(info, values, this->DeviceInfoSOE);
+	}
+
 	virtual void Process(const HeaderInfo& info, const ICollection<Indexed<DoubleBitBinary>>& values) override final
 	{
 		this->RecordAny(info, values, this->doubleBinarySOE);
@@ -138,6 +143,7 @@ public:
 		binaryCommandEventSOE.clear();
 		analogCommandEventSOE.clear();
 		securityStatSOE.clear();
+		DeviceInfoSOE.clear();
 	}
 
 	std::map<uint16_t, Record<Binary>> binarySOE;
@@ -152,7 +158,7 @@ public:
 	std::map<uint16_t, Record<BinaryCommandEvent>> binaryCommandEventSOE;
 	std::map<uint16_t, Record<AnalogCommandEvent>> analogCommandEventSOE;
 	std::map<uint16_t, Record<SecurityStat>> securityStatSOE;
-
+	std::map<uint16_t , Record<Devicedata>> DeviceInfoSOE;
 protected:
 
 	void Start() override {}
@@ -174,8 +180,6 @@ private:
 
 		values.ForeachItem(process);
 	}
-
-
 
 
 };

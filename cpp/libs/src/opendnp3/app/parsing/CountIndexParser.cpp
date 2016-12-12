@@ -21,7 +21,8 @@
 #include "CountIndexParser.h"
 
 #include <openpal/logging/LogMacros.h>
-
+#include <openpal/serialization/ByteSerialization.h>
+#include <openpal/serialization/Serialization.h>
 #include "opendnp3/ErrorCodes.h"
 
 #include "opendnp3/objects/Group2.h"
@@ -101,6 +102,8 @@ ParseResult CountIndexParser::ParseCountOfObjects(openpal::RSlice& buffer, const
 {
 	switch (record.enumeration)
 	{
+		case(GroupVariation::Group0Var250) :
+			return ParseIndexPrefixedDeviceData(buffer, record, numparser, count, pLogger, pHandler);
 	case(GroupVariation::Group2Var1) :
 		return CountIndexParser::From<Group2Var1>(count, numparser).Process(record, buffer, pHandler, pLogger);
 	case(GroupVariation::Group2Var2) :
@@ -260,4 +263,43 @@ ParseResult CountIndexParser::ParseIndexPrefixedOctetData(openpal::RSlice& buffe
 	return ParseResult::OK;
 }
 
-}
+
+	ParseResult CountIndexParser::ParseIndexPrefixedDeviceData(openpal::RSlice& buffer, const HeaderRecord& record, const NumParser& numparser, uint32_t count, openpal::Logger* pLogger, IAPDUHandler* pHandler)
+	{using namespace openpal;
+
+
+            uint8_t index = UInt8::ReadBuffer(buffer);
+            uint8_t typecode = UInt8::ReadBuffer(buffer);
+            uint8_t size = UInt8::ReadBuffer(buffer);
+		const uint32_t TOTAL_SIZE = count * size;//TODO
+
+		if (buffer.Size() < TOTAL_SIZE)
+		{
+			SIMPLE_LOGGER_BLOCK(pLogger, flags::WARN, "Not enough data for specified bitfield objects");
+			return ParseResult::NOT_ENOUGH_DATA_FOR_OBJECTS;
+		}
+        if(typecode==1){
+            if (pHandler)
+            {
+                HandleFun handler;
+                auto read = [&index](openpal::RSlice &buffer, uint32_t pos)-> Indexed<Devicedata> {
+                    Indexed<Devicedata> pair;
+                    pair.index = index;
+                    Group0Var250::ReadTarget(buffer, pair.value);
+                    return pair;
+                };
+
+
+                auto collection = CreateBufferedCollection<Indexed < Devicedata>>(buffer, count, read);
+
+                pHandler->OnHeader(PrefixHeader(record, count), collection);
+            }}
+        else if (typecode==2)
+        {
+
+            //TODO will do the parsing of other typecodes
+
+        }
+		buffer.Advance(TOTAL_SIZE);
+		return ParseResult::OK;
+}}
